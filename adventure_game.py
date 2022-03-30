@@ -2,14 +2,23 @@
 #IMPORTS
 #########################
 from adventurelib import*
+import time
+
+def main():
+	start()
+	#start the main loop
+
+if _name_ == '_main_':
+	main()
+
 
 #########################
 #DEFINE ROOMS
 #########################
 Jungle = Room("You are in the jungle, You have finally found the elusive temple and its entrance is beckoning you")
 MainTempleRoom = Room("You are in the main temple room, It is nearly completely dark except for a large mysterious statue of what seems to be an ancient warrior, lit up by a small torch laying on its side")
-CornerRoom1 = Room("You are in a small corner room")
-CornerRoom2 = Room("You are in a small corner room")
+CornerRoom1 = Room("You are in a small corner room,there may be other rooms near by")
+CornerRoom2 = Room("You are in a small corner room,there may be other rooms near by")
 SwordRoom = Room("You are in an all but barren dark room, except for a gleaming sword providing the tiniest bit of light")
 BurialTomb = Room("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
 TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound. Perhaps there are traps?")
@@ -23,6 +32,22 @@ TreasureRoom = Room("You see the treasure lying in the center of the room, there
 #########################
 #DEFINE CONNECTIONS
 #########################
+Jungle.north = MainTempleRoom
+MainTempleRoom.east = CornerRoom1
+MainTempleRoom.west = CornerRoom2
+CornerRoom1.north = BurialTomb
+CornerRoom2.north = SwordRoom
+SwordRoom.west = TrapRoom
+SwordRoom.north = DeathRoom
+TrapRoom.west = BurialTomb
+TrapRoom.north = HallwayRoom
+StatueRoom.east = DeathRoom
+HallwayRoom.east = StatueRoom
+HallwayRoom.west = BushRoom
+HallwayRoom.north = LockRoom
+LockRoom.east = TreasureRoom
+BushRoom.north = DeadEnd
+
 
 #########################
 #DEFINE ITEMS
@@ -39,10 +64,14 @@ TreasureRoom = Room("You see the treasure lying in the center of the room, there
 #########################
 #DEFINE ANY VARIABLES
 #########################
-
+game_start == True
+current_room = Jungle
 #########################
 #BINDS
 #########################
+if game_start == True:
+	print("You are in the jungle and have finally found the elusive temple. You are closer then ever to finding the treasure.")
+    game_start = False
 
 #########################
 #MAIN FUNCTION
