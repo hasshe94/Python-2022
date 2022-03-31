@@ -4,14 +4,6 @@
 from adventurelib import*
 import time
 
-def main():
-	start()
-	#start the main loop
-
-if _name_ == '_main_':
-	main()
-
-
 #########################
 #DEFINE ROOMS
 #########################
@@ -76,3 +68,8 @@ if game_start == True:
 #########################
 #MAIN FUNCTION
 #########################
+def main():
+	start()
+	#start the main loop
+
+main()
