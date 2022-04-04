@@ -19,10 +19,10 @@ SwordRoom = Room("You are in an all but barren dark room, except for a gleaming 
 BurialTomb = Room("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
 TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound. Perhaps there are traps?")
 BushRoom = Room("What was once a room is now overtaken by nature. To see more you may have to get to cutting")
-DeadEnd = Room("The room is a deadend, the only way back is the way you came. But there is a note that may help along the journey.")
+DeadEnd = Room("The room is a deadend, the only way back is the way you came. But there is a skeleton that searching may prove usefull.")
 HallwayRoom = Room("You enter an empty room. It has a statue of an angry man, perhaps telling you to go back")
 StatueRoom = Room("You enter a barren room, it has a shining gold statue pointing to the east")
-DeathRoom = Room("You enter an empty room, mechanical doors close on you, you are left to die a slow painful death")
+DeathRoom = Room("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
 LockRoom = Room("You enter a tall room with almost with an almost deafining scilence, there is a locked door near the end of the room, you need a code to break through")
 TreasureRoom = Room("You see the treasure lying in the center of the room, there is only one problem. Someone is guarding it. You will have to fight them")
 
@@ -44,6 +44,7 @@ HallwayRoom.west = BushRoom
 HallwayRoom.north = LockRoom
 LockRoom.east = TreasureRoom
 BushRoom.north = DeadEnd
+BushRoom.south = BurialTomb
 
 
 
@@ -60,22 +61,42 @@ torch = Item("A light","A torch","torch","light")
 #########################
 sword.description = "This sword shall guide you through the quest for treasure"
 note.description = "You look at the note. The numbers 3459 are scribbled"
-torch.description = "the torch is "
+torch.description = "The torch is a regular gleaming light. Use it on your journey"
 
 #########################
 #ADD ITEMS TO BAG
 #########################
 DeadEnd.add(note)
 SwordRoom.add(sword)
-
+MainTempleRoom.add(torch)
 #########################
 #DEFINE ANY VARIABLES
 #########################
 current_room  = Jungle
 inventory = Bag()
-door_opened = False
-used_keycard = False
+lock_opened = False
+trap_complete = False
+bush_complete = False
+Boss = False
 
+if current_room == BurialTomb:
+	print("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
+	game_start = False
+
+if current_room == DeathRoom:
+	print("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
+	game_start = False
+####################
+#room stuff
+####################
+if current_room == TrapRoom and sword_block == False:
+	print("You see dart machines that may start to shoot, do something!!")
+
+if sword_block == True and current_room == TrapRoom:
+	print("You have evaded the traps, You must cut through remaining bushes to access other parts of the temple")
+
+if sword_block == True and current_room == TrapRoom and cut_bush == True:
+	print("You have evaded everything.continue onwards.")
 #########################
 #BINDS
 #########################
@@ -83,16 +104,21 @@ used_keycard = False
 def jump():
 	print("You jump")
 
-@when("enter airlock")
-@when("enter spaceship")
-@when("enter ship")
-def enter_airlock():
+@when("easter egg")
+def jump():
+	print("Play the game you egg")
+
+
+@when("enter temple")
+@when("enter the temple")
+@when("enter treasure site")
+def enter_temple():
 	global current_room
-	if current_room == space:
-		print("You haul yourself into the airlock")
-		current_room = airlock
+	if current_room == Jungle: #checks if user is outside temple to proceed into temple
+		print("You enter the temple into the main room. You are ready to seek the treasure")
+		current_room = MainTempleRoom
 	else:
-		print("There is no airlock here")
+		print("You are already in the temple")
 	print(current_room)
 
 @when("go DIRECTION")
@@ -111,12 +137,19 @@ def travel(direction):
 @when("look")
 def look():
 	print(current_room)
-	print("There are exits to the ",current_room.exits())
+	exits_amount = int(len(current_room.exits()))
+    if exits_amount == 1:
+        #grammatically correct way of saying there is one exit
+        print(f"There is a visible exit to the {', '.join(current_room.exits())}")
+    elif exits_amount > 1:
+        #grammatically correct way of saying there is more than one exit
+        print(f"There are visible exits to the {', '.join(current_room.exits()[:-1]) + ' and ' + current_room.exits()[-1]}")
+    else:
+        print("There are no visible exits")
 	if len(current_rooms.items) > 0:
 		print("You also see:")
 		for item in current_room.items:
 			print(item)
-
 
 @when("get ITEM")
 @when("take ITEM")
@@ -138,40 +171,82 @@ def check_inventory():
 	for item in inventory:
 		print(item)
 
-@when("search body")
-@when("look at body")
-@when("search man")
-def search_body():
-	global body_searched
-	if current_room == bridge and body_searched == False:
-		print("you search the body and a red keycard falls to the floor")
-		current_room.items.add(keycard)
-		body_searched = True
-	elif current_room == bridge and body_searched == True:
-		print("You have already searched the body")
+
+@when("search skeleton")
+@when("look through skeleton")
+@when("search the skeleton")
+def search_body(): #sets up variables for search
+	global skeleton_searched
+	if current_room == DeadEnd and skeleton_searched == False:
+		print("you search the skeleton and find a note containing a code")
+		current_room.items.add(note)
+		skeleton_searched = True
+	elif current_room == DeadEnd and skeleton_searched == True:
+		print("You have already searched the skeleton")
 	else:
-		print("There is no body here to search")
+		print("There is no skeleton here to search")
 
 @when("use ITEM")
 def use(item):
-	if item == keycard and current_room == bridge:
-		print("You use the keycard and the escape pod slides open")
-		print("The escape pod stands open to the south")
-		bridge.south = escape
+	if item == note and current_room == LockRoom:
+		print("You use the note which contains the code on the old locked door, it rumbles down revealing a chest with many treasures. ")
+		LockRoom.east = TreasureRoom
 	else:
 		print("You can't use that here")
 
 
-
-@when("type code")
-def escape_pod_win():
-	if note in inventory:
-		if current_room == escape:
-			print("You enter the code and escape. You win")
+@when("cut bushes")
+@when("cut through bushes")
+def bush_cut():
+	global bush_cut
+		if current_room == BushRoom and if item in bag() == sword:
+			print("You have cut through the bushes and revealed new paths on your quest to treasure.")
+			BushRoom.north = DeadEnd
+			BushRoom.south = BurialTomb
+		elif If item in bag() == sword:
+			print("You don't have a sword, search for it.")
 		else:
-			print("There is no where to enter the code")
-	else:
-		print("You don't have the code. You can't just guess it.")
+			print("There are no bushes")
+
+@when("block darts")
+@when("block")
+@when("block with sword")
+@when("block darts with sword")
+def sword_block():
+	global sword_block
+		if current_room == TrapRoom and if item in bag() == sword and sword_block == False:
+			print("You have blocked off the darts")
+			sword_block == True
+		elif item in bag() == sword:
+			print("You don't have a sword, search for it.")
+		elif sword_block == True:
+			print("There are no more darts to block")
+		else:
+			print("There is nothing to block")
+
+@when("cut bushes")
+@when("cut through bushes")
+def cut_bush():
+	global cut_bush
+		if current_room == TrapRoom and if item in bag() == sword and sword_block == True:
+			print("You have cut through the bushes and revealed new paths on your quest to treasure.")
+			TrapRoom.north = HallwayRoom
+			TrapRoom.west = BurialTomb
+		elif If item in bag() == sword:
+			print("You don't have a sword, search for it.")
+		else:
+			print("There are no bushes")
+
+
+@when("open treasure")
+def treasureroom_win():
+	if boss == True:
+		if current_room == TreasureRoom:
+			print("You have evaded the death this elusive temple brings. You are now a rich man with many treasures.")
+			game_start = False
+		else:
+			print("There is no treasure anywhere")
+
 
 #EVERYTHING GOES ABOVE HERE - DO NOT CHANGE
 #ANYTHING BELOW THIS LINE
