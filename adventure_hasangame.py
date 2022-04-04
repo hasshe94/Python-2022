@@ -11,8 +11,8 @@ Room.item = Bag()
 #########################
 #DEFINE ROOMS
 #########################
-Jungle = Room("You are in the jungle, You have finally found the elusive temple and its entrance is beckoning you")
-MainTempleRoom = Room("You are in the main temple room, It is nearly completely dark except for a large mysterious statue of what seems to be an ancient warrior, lit up by a small torch laying on its side")
+Jungle = Room("You are in the jungle, You have finally found the elusive temple and its entrance is beckoning you,clutching your torch your eager to make it in")
+MainTempleRoom = Room("You are in the main temple room, It is nearly empty except for a large mysterious statue of what seems to be an ancient warrior.")
 CornerRoom1 = Room("You are in a small corner room,there may be other rooms near by")
 CornerRoom2 = Room("You are in a small corner room,there may be other rooms near by")
 SwordRoom = Room("You are in an all but barren dark room, except for a gleaming sword providing the tiniest bit of light")
@@ -54,21 +54,19 @@ BushRoom.south = BurialTomb
 item.description = ""
 sword = Item("blade","SwordRoom")
 note = Item("A scribbled note","note","paper","code")
-torch = Item("A light","A torch","torch","light")
 
 #########################
 #DEFINE BAGS
 #########################
 sword.description = "This sword shall guide you through the quest for treasure"
 note.description = "You look at the note. The numbers 3459 are scribbled"
-torch.description = "The torch is a regular gleaming light. Use it on your journey"
+
 
 #########################
 #ADD ITEMS TO BAG
 #########################
 DeadEnd.add(note)
 SwordRoom.add(sword)
-MainTempleRoom.add(torch)
 #########################
 #DEFINE ANY VARIABLES
 #########################
