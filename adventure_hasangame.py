@@ -77,16 +77,20 @@ trap_complete = False
 bush_complete = False
 boss = False
 
+#checks to see if you are in the room and if you are you die
 if current_room == BurialTomb:
 	print("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
 	game_start = False
-
+#checks to see if you are in the room and if you are you die
 if current_room == DeathRoom:
 	print("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
 	game_start = False
 ####################
 #room stuff
 ####################
+#this is all code for trap room and bush room and it ensures the player has to get through the challenges to progress
+if current_room == BushRoom:
+	print("You have to cut the bushes to get past.")
 if current_room == TrapRoom and sword_block == False:
 	print("You see dart machines that may start to shoot, do something!!")
 
@@ -184,6 +188,7 @@ def search_body(): #sets up variables for search
 	else:
 		print("There is no skeleton here to search")
 
+#code below checks if the user has the note item in their inventory and if they are in the lock room to either let the user into the treasure room or deny their entry
 @when("use ITEM")
 def use(item):
 	if item == note and current_room == LockRoom:
@@ -192,7 +197,7 @@ def use(item):
 	else:
 		print("You can't use that here")
 
-
+#this code is for the bush room and makes the user cut the bushes with their sword to move onto new room
 @when("cut bushes")
 @when("cut through bushes")
 def bush_cut():
@@ -206,6 +211,12 @@ def bush_cut():
 		else:
 			print("There are no bushes")
 
+#this code makes the user die if they use commands other then one also listed below in the trap room
+@when()
+if current_room == TrapRoom:
+	print("The darts have killed not only your dreams of treasure, but also you.")
+
+#this code is for the trap room and checks when the user inputs to block the darts if they can block it and move on, or if they will die
 @when("block darts")
 @when("block")
 @when("block with sword")
@@ -213,15 +224,19 @@ def bush_cut():
 def sword_block():
 	global sword_block
 		if current_room == TrapRoom and if item in bag() == sword and sword_block == False:
-			print("You have blocked off the darts")
+			print("You have blocked off the darts with your sword")
 			sword_block == True
 		elif item in bag() == sword:
-			print("You don't have a sword, search for it.")
+			print("You don't have a sword,the darts pierce you and you die.")
 		elif sword_block == True:
 			print("There are no more darts to block")
 		else:
 			print("There is nothing to block")
 
+
+
+#this code is for the trap room and makes the user cut the bushes with their sword to move onto new room
+@when("cut bushes")
 @when("cut bushes")
 @when("cut through bushes")
 def cut_bush():
@@ -235,12 +250,12 @@ def cut_bush():
 		else:
 			print("There are no bushes")
 
-
+#this code is for the game ending and it checks if the user has killed the boss before they do the final input which is open treasure which leads to game victory
 @when("open treasure")
 def treasureroom_win():
 	if boss == True:
 		if current_room == TreasureRoom:
-			print("You have evaded the death this elusive temple brings. You are now a rich man with a story to tell.")
+			print("The chest is opened revealing millions of dollars of jewels. You have evaded the death this elusive temple brings. You are now a rich man with a story to tell.")
 			game_start = False
 		else:
 			print("There is no treasure anywhere")
