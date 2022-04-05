@@ -75,7 +75,7 @@ inventory = Bag()
 lock_opened = False
 trap_complete = False
 bush_complete = False
-Boss = False
+boss = False
 
 if current_room == BurialTomb:
 	print("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
@@ -240,10 +240,42 @@ def cut_bush():
 def treasureroom_win():
 	if boss == True:
 		if current_room == TreasureRoom:
-			print("You have evaded the death this elusive temple brings. You are now a rich man with many treasures.")
+			print("You have evaded the death this elusive temple brings. You are now a rich man with a story to tell.")
 			game_start = False
 		else:
 			print("There is no treasure anywhere")
+
+#BOSS FIGHT ########################################
+if current_room == TreasureRoom and boss = False:
+	print("You must fight the boss to take the treasure")
+#defining health variables for the fight
+player_health = 10
+boss_health = 20
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #EVERYTHING GOES ABOVE HERE - DO NOT CHANGE
