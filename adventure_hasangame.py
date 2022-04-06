@@ -139,19 +139,14 @@ def travel(direction):
 @when("look")
 def look():
 	print(current_room)
-	exits_amount = int(len(current_room.exits()))
-    if exits_amount == 1:
-        #grammatically correct way of saying there is one exit
-        print(f"There is a visible exit to the {', '.join(current_room.exits())}")
-    elif exits_amount > 1:
-        #grammatically correct way of saying there is more than one exit
-        print(f"There are visible exits to the {', '.join(current_room.exits()[:-1]) + ' and ' + current_room.exits()[-1]}")
-    else:
-        print("There are no visible exits")
+	print("There are exits to the ",current_room.exits())
 	if len(current_rooms.items) > 0:
 		print("You also see:")
 		for item in current_room.items:
 			print(item)
+
+
+
 
 @when("get ITEM")
 @when("take ITEM")
@@ -266,6 +261,7 @@ if current_room == TreasureRoom and boss = False:
 #defining health variables for the fight
 player_health = 10
 boss_health = 20
+
 
 
 

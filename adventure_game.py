@@ -73,3 +73,28 @@ def main():
 	#start the main loop
 
 main()
+
+
+
+
+
+
+
+#test code this document isnt meant to be used for final code
+
+@when("look")
+def look():
+	print(current_room)
+	exits_amount = int(len(current_room.exits()))
+    if exits_amount == 1:
+        #grammatically correct way of saying there is one exit
+        print(f"There is a visible exit to the {', '.join(current_room.exits())}")
+    elif exits_amount > 1:
+        #grammatically correct way of saying there is more than one exit
+        print(f"There are visible exits to the {', '.join(current_room.exits()[:-1]) + ' and ' + current_room.exits()[-1]}")
+    else:
+        print("There are no visible exits")
+	if len(current_rooms.items) > 0:
+		print("You also see:")
+		for item in current_room.items:
+			print(item)
