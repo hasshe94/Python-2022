@@ -52,7 +52,7 @@ BushRoom.south = BurialTomb
 #DEFINE ITEMS
 #########################
 item.description = ""
-sword = Item("blade","SwordRoom")
+sword = Item("blade","SwordRoom","sword")
 note = Item("A scribbled note","note","paper","code")
 
 #########################
@@ -197,11 +197,11 @@ def use(item):
 @when("cut through bushes")
 def bush_cut():
 	global bush_cut
-		if current_room == BushRoom and if item in bag() == sword:
+		if current_room == BushRoom and "sword" in inventory:
 			print("You have cut through the bushes and revealed new paths on your quest to treasure.")
 			BushRoom.north = DeadEnd
 			BushRoom.south = BurialTomb
-		elif If item in bag() == sword:
+		elif "sword" not in inventory:
 			print("You don't have a sword, search for it.")
 		else:
 			print("There are no bushes")
@@ -218,7 +218,7 @@ if current_room == TrapRoom:
 @when("block darts with sword")
 def sword_block():
 	global sword_block
-		if current_room == TrapRoom and if item in bag() == sword and sword_block == False:
+		if current_room == TrapRoom and "sword" in inventory and sword_block == False:
 			print("You have blocked off the darts with your sword")
 			sword_block == True
 		elif item in bag() == sword:
@@ -236,7 +236,7 @@ def sword_block():
 @when("cut through bushes")
 def cut_bush():
 	global cut_bush
-		if current_room == TrapRoom and if item in bag() == sword and sword_block == True:
+		if current_room == TrapRoom and "sword" in inventory: and sword_block == True:
 			print("You have cut through the bushes and revealed new paths on your quest to treasure.")
 			TrapRoom.north = HallwayRoom
 			TrapRoom.west = BurialTomb
