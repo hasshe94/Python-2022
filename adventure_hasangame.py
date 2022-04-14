@@ -51,8 +51,9 @@ BushRoom.south = BurialTomb
 #########################
 #DEFINE ITEMS
 #########################
-item.description = ""
-sword = Item("blade","SwordRoom","sword")
+Item.description = ""
+sword = Item("blade","sword")
+
 note = Item("A scribbled note","note","paper","code")
 
 #########################
@@ -65,8 +66,8 @@ note.description = "You look at the note. The numbers 3459 are scribbled"
 #########################
 #ADD ITEMS TO BAG
 #########################
-DeadEnd.add(note)
-SwordRoom.add(sword)
+DeadEnd.items.add(note)
+SwordRoom.items.add(sword)
 #########################
 #DEFINE ANY VARIABLES
 #########################
@@ -175,14 +176,14 @@ def use(item):
 @when("cut through bushes")
 def bush_cut():
 	global bush_cut
-		if current_room == BushRoom and "sword" in inventory:
-			print("You have cut through the bushes and revealed new paths on your quest to treasure.")
-			BushRoom.north = DeadEnd
-			BushRoom.south = BurialTomb
-		elif "sword" not in inventory:
-			print("You don't have a sword, search for it.")
-		else:
-			print("There are no bushes")
+	if current_room == BushRoom and "sword" in inventory:
+		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
+		BushRoom.north = DeadEnd
+		BushRoom.south = BurialTomb
+	elif "sword" not in inventory:
+		print("You don't have a sword, search for it.")
+	else:
+		print("There are no bushes")
 
 
 #this code is for the trap room and checks when the user inputs to block the darts if they can block it and move on, or if they will die
@@ -195,20 +196,17 @@ if current_room == TrapRoom and sword_block == False:
 @when("block darts with sword")
 def sword_block():
 	global sword_block
-		if current_room == TrapRoom and "sword" in inventory and sword_block == False:
-			print("You have blocked off the darts with your sword")
-			sword_block == True
-		elif "sword" not in inventory:
-			print("You don't have a sword,the darts pierce you and you die.")
-		elif sword_block == True:
-			print("There are no more darts to block")
-		else:
-			print("There is nothing to block")
+	if current_room == TrapRoom and "sword" in inventory and sword_block == False:
+		print("You have blocked off the darts with your sword")
+		sword_block == True
+	elif "sword" not in inventory:
+		print("You don't have a sword,the darts pierce you and you die.")
+		game_start = False
+	elif sword_block == True:
+		print("There are no more darts to block")
+	else:
+		print("There is nothing to block")
 
-#this code makes the user die 
-@when()
-if current_room == TrapRoom:
-	print("The darts have killed not only your dreams of treasure, but also you.")
 
 
 
@@ -218,14 +216,14 @@ if current_room == TrapRoom:
 @when("cut through bushes")
 def cut_bush():
 	global cut_bush
-		if current_room == TrapRoom and "sword" in inventory: and sword_block == True:
-			print("You have cut through the bushes and revealed new paths on your quest to treasure.")
-			TrapRoom.north = HallwayRoom
-			TrapRoom.west = BurialTomb
-		elif "sword" not in inventory:
-			print("You don't have a sword, search for it.")
-		else:
-			print("There are no bushes")
+	if current_room == TrapRoom and "sword" in inventory and sword_block == True:
+		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
+		TrapRoom.north = HallwayRoom
+		TrapRoom.west = BurialTomb
+	elif "sword" not in inventory:
+		print("You don't have a sword, search for it.")
+	else:
+		print("There are no bushes")
 
 
 #checks to see if you are in the room and if you are you die
@@ -252,8 +250,8 @@ def treasureroom_win():
 			print("There is no treasure anywhere")
 
 #BOSS FIGHT ########################################
-if current_room == TreasureRoom and boss = False:
-	print("You must fight the boss to take the treasure")
+if current_room == TreasureRoom and boss == False:
+   print("You must fight the boss to take the treasure")
 #defining health variables for the fight
 player_health = 10
 boss_health = 20
