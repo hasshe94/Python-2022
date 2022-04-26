@@ -19,7 +19,7 @@ SwordRoom = Room("You are in an all but barren dark room, except for a gleaming 
 BurialTomb = Room("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
 TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound. Perhaps there are traps?")
 BushRoom = Room("What was once a room is now overtaken by nature. To see more you may have to get to cutting")
-DeadEnd = Room("The room is a deadend, the only way back is the way you came. But there is a skeleton that searching may prove usefull.")
+DeadEnd = Room("The room is a deadend, the only way back is the way you came. But there is a skeleton that searching may prove useful, unless you already have.")
 HallwayRoom = Room("You enter an empty room. It has a statue of an angry man, perhaps telling you to go back")
 StatueRoom = Room("You enter a barren room, it has a shining gold statue pointing to the east")
 DeathRoom = Room("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
@@ -52,8 +52,8 @@ BushRoom.south = BurialTomb
 #DEFINE ITEMS
 #########################
 Item.description = ""
-sword = Item("blade","sword")
-note = Item("A scribbled note","note","paper","code")
+sword = Item("sword","blade")
+note = Item("note","A scribbled note","paper","code")
 
 #########################
 #DEFINE BAGS
@@ -65,16 +65,24 @@ note.description = "You look at the note. The numbers 3459 are scribbled"
 #########################
 #ADD ITEMS TO BAG
 #########################
-DeadEnd.item.add(note)
 SwordRoom.item.add(sword)
 #########################
 #DEFINE ANY VARIABLES
 #########################
 current_room  = Jungle
+
 inventory = Bag()
+
+skeleton_searched = False
+
 lock_opened = False
+
 trap_complete = False
+
 bush_complete = False
+
+game_start = True
+
 boss = False
 
 #########################
@@ -118,14 +126,14 @@ def travel(direction):
 def look():
 	print(current_room)
 	print("There are exits to the ",current_room.exits())
-	if len(current_rooms.items) > 0:
+	if len(current_room.item) > 0:
 		print("You also see:")
-		for item in current_room.items:
+		for item in current_room.item:
 			print(item)
 
 
-
-
+@when("pick ITEM")
+@when("pick up ITEM")
 @when("get ITEM")
 @when("take ITEM")
 def get_item(item):
@@ -133,8 +141,8 @@ def get_item(item):
 	#take it out of room
 	#put into inventory
 	#otherwise tell user there is no item
-	if item in current_room.items:
-		t = current_room.items.take(item)
+	if item in current_room.item:
+		t = current_room.item.take(item)
 		inventory.add(t)
 		print(f"You picked up the {item}")
 	else:
@@ -147,6 +155,14 @@ def check_inventory():
 		print(item)
 
 
+
+
+
+
+
+
+
+
 @when("search skeleton")
 @when("look through skeleton")
 @when("search the skeleton")
@@ -154,12 +170,27 @@ def search_body(): #sets up variables for search
 	global skeleton_searched
 	if current_room == DeadEnd and skeleton_searched == False:
 		print("you search the skeleton and find a note containing a code")
-		current_room.items.add(note)
+		current_room.item.add(note)
 		skeleton_searched = True
 	elif current_room == DeadEnd and skeleton_searched == True:
 		print("You have already searched the skeleton")
 	else:
 		print("There is no skeleton here to search")
+
+
+
+@when("look at note")
+@when("look note")
+@when("read note")
+def look_note():
+	print(note.description)
+
+@when("look at sword")
+@when("look sword")
+@when("read sword")
+def look_sword():
+	print(sword.description)
+
 
 #code below checks if the user has the note item in their inventory and if they are in the lock room to either let the user into the treasure room or deny their entry
 @when("use ITEM")
@@ -167,8 +198,10 @@ def use(item):
 	if item == note and current_room == LockRoom:
 		print("You use the note which contains the code on the old locked door, it rumbles down revealing a chest with many treasures. ")
 		LockRoom.east = TreasureRoom
+	elif "note" not in inventory:
+		print("You don't have a note")
 	else:
-		print("You can't use that here")
+		print("There is no where to use the note.")
 
 #this code is for the bush room and makes the user cut the bushes with their sword to move onto new room
 @when("cut bushes")
@@ -229,10 +262,12 @@ def cut_bush():
 if current_room == BurialTomb:
 	print("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
 	game_start = False
+	quit()
 #checks to see if you are in the room and if you are you die
 if current_room == DeathRoom:
 	print("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
 	game_start = False
+	quit()
 
 
 
