@@ -30,8 +30,8 @@ TreasureRoom = Room("You see the treasure lying in the center of the room, there
 #DEFINE CONNECTIONS
 #########################
 Jungle.north = MainTempleRoom
-MainTempleRoom.east = CornerRoom1
-MainTempleRoom.west = CornerRoom2
+MainTempleRoom.east = CornerRoom2
+MainTempleRoom.west = CornerRoom1
 CornerRoom1.north = BurialTomb
 CornerRoom2.north = SwordRoom
 SwordRoom.west = TrapRoom
@@ -53,7 +53,6 @@ BushRoom.south = BurialTomb
 #########################
 Item.description = ""
 sword = Item("blade","sword")
-
 note = Item("A scribbled note","note","paper","code")
 
 #########################
@@ -66,8 +65,8 @@ note.description = "You look at the note. The numbers 3459 are scribbled"
 #########################
 #ADD ITEMS TO BAG
 #########################
-DeadEnd.items.add(note)
-SwordRoom.items.add(sword)
+DeadEnd.item.add(note)
+SwordRoom.item.add(sword)
 #########################
 #DEFINE ANY VARIABLES
 #########################
