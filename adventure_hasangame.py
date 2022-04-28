@@ -12,18 +12,31 @@ Room.item = Bag()
 #DEFINE ROOMS
 #########################
 Jungle = Room("You are in the jungle, You have finally found the elusive temple and its entrance is beckoning you,clutching your torch your eager to make it in")
+
 MainTempleRoom = Room("You are in the main temple room, It is nearly empty except for a large mysterious statue of what seems to be an ancient warrior.")
+
 CornerRoom1 = Room("You are in a small corner room,there may be other rooms near by")
+
 CornerRoom2 = Room("You are in a small corner room,there may be other rooms near by")
+
 SwordRoom = Room("You are in an all but barren dark room, except for a gleaming sword providing the tiniest bit of light")
+
 BurialTomb = Room("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
-TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound. Perhaps there are traps?")
+
+TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound. Darts start flying towards you. DO SOMETHING!")
+
 BushRoom = Room("What was once a room is now overtaken by nature. To see more you may have to get to cutting")
+
 DeadEnd = Room("The room is a deadend, the only way back is the way you came. But there is a skeleton that searching may prove useful, unless you already have.")
+
 HallwayRoom = Room("You enter an empty room. It has a statue of an angry man, perhaps telling you to go back")
+
 StatueRoom = Room("You enter a barren room, it has a shining gold statue pointing to the east")
+
 DeathRoom = Room("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
+
 LockRoom = Room("You enter a tall room with almost with an almost deafining scilence, there is a locked door near the end of the room, you need a code to break through")
+
 TreasureRoom = Room("You see the treasure lying in the center of the room, there is only one problem. Someone is guarding it. You will have to fight them")
 
 #########################
@@ -36,17 +49,10 @@ CornerRoom1.north = BurialTomb
 CornerRoom2.north = SwordRoom
 SwordRoom.west = TrapRoom
 SwordRoom.north = DeathRoom
-TrapRoom.west = BurialTomb
-TrapRoom.north = HallwayRoom
 StatueRoom.east = DeathRoom
 HallwayRoom.east = StatueRoom
 HallwayRoom.west = BushRoom
 HallwayRoom.north = LockRoom
-LockRoom.east = TreasureRoom
-BushRoom.north = DeadEnd
-BushRoom.south = BurialTomb
-
-
 
 #########################
 #DEFINE ITEMS
@@ -58,7 +64,7 @@ note = Item("note","A scribbled note","paper","code")
 #########################
 #DEFINE BAGS
 #########################
-sword.description = "This sword shall guide you through the quest for treasure"
+sword.description = "This sword is sturdy and sharp and shall guide you through the quest for treasure"
 note.description = "You look at the note. The numbers 3459 are scribbled"
 
 
@@ -73,6 +79,12 @@ current_room  = Jungle
 
 inventory = Bag()
 
+sword_block = False
+
+cut_bush = False
+
+bush_cut = False
+
 skeleton_searched = False
 
 lock_opened = False
@@ -85,12 +97,13 @@ game_start = True
 
 boss = False
 
+game_death = False
+
 #########################
 #BINDS
 #########################
-@when("jump")
-def jump():
-	print("You jump")
+
+
 
 @when("easter egg")
 def jump():
@@ -154,10 +167,32 @@ def check_inventory():
 	for item in inventory:
 		print(item)
 
+@when("go north")
+@when("go south")
+@when("go east")
+@when("go west")
+@when("r")
+def game_end():
+	if current_room == MainTempleRoom:
+		print("goodluck on your journey!")
+	elif current_room == DeathRoom:
+		game_death == True
+		quit()
+	
 
+@when("go north")
+@when("go south")
+@when("go east")
+@when("go west")
+@when("r")
+def game_end():
+	if current_room == DeadEnd:
+		print("You have a feeling that you are closer then ever to finding the treasure")
+	elif current_room == BurialTomb:
+		game_death == True
+		quit()
 
-
-
+	
 
 
 
@@ -178,7 +213,7 @@ def search_body(): #sets up variables for search
 		print("There is no skeleton here to search")
 
 
-
+#the code below simply makes the item description print out when the user wants to see it
 @when("look at note")
 @when("look note")
 @when("read note")
@@ -203,24 +238,8 @@ def use(item):
 	else:
 		print("There is no where to use the note.")
 
-#this code is for the bush room and makes the user cut the bushes with their sword to move onto new room
-@when("cut bushes")
-@when("cut through bushes")
-def bush_cut():
-	global bush_cut
-	if current_room == BushRoom and "sword" in inventory:
-		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
-		BushRoom.north = DeadEnd
-		BushRoom.south = BurialTomb
-	elif "sword" not in inventory:
-		print("You don't have a sword, search for it.")
-	else:
-		print("There are no bushes")
 
 
-#this code is for the trap room and checks when the user inputs to block the darts if they can block it and move on, or if they will die
-if current_room == TrapRoom and sword_block == False:
-	print("You see dart machines that may start to shoot, do something!!")
 
 @when("block darts")
 @when("block")
@@ -229,11 +248,11 @@ if current_room == TrapRoom and sword_block == False:
 def sword_block():
 	global sword_block
 	if current_room == TrapRoom and "sword" in inventory and sword_block == False:
-		print("You have blocked off the darts with your sword")
-		sword_block == True
+		print("You have blocked off the darts with your sword,You may cut the bushes and push on!")
+		sword_block = True
 	elif "sword" not in inventory:
 		print("You don't have a sword,the darts pierce you and you die.")
-		game_start = False
+		quit()
 	elif sword_block == True:
 		print("There are no more darts to block")
 	else:
@@ -244,31 +263,33 @@ def sword_block():
 
 #this code is for the trap room and makes the user cut the bushes with their sword to move onto new room
 @when("cut bushes")
-@when("cut bushes")
 @when("cut through bushes")
 def cut_bush():
-	global cut_bush
 	if current_room == TrapRoom and "sword" in inventory and sword_block == True:
 		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
 		TrapRoom.north = HallwayRoom
 		TrapRoom.west = BurialTomb
+		cut_bush == True
 	elif "sword" not in inventory:
 		print("You don't have a sword, search for it.")
 	else:
-		print("There are no bushes")
+		print("There are no bushes left")
 
 
-#checks to see if you are in the room and if you are you die
-if current_room == BurialTomb:
-	print("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
-	game_start = False
-	quit()
-#checks to see if you are in the room and if you are you die
-if current_room == DeathRoom:
-	print("You enter an empty room, mechanical doors close on you, trapping you, you are left to die a slow painful death")
-	game_start = False
-	quit()
 
+#this code is for the bush room and makes the user cut the bushes with their sword to move onto new room
+@when("cut bushes")
+@when("cut through bushes")
+def bush_cut():
+	if current_room == BushRoom and "sword" in inventory:
+		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
+		BushRoom.north = DeadEnd
+		BushRoom.south = BurialTomb
+		bush_cut == True
+	elif "sword" not in inventory:
+		print("You don't have a sword, search for it.")
+	else:
+		print("There are no bushes left")
 
 
 
@@ -276,12 +297,12 @@ if current_room == DeathRoom:
 #this code is for the game ending and it checks if the user has killed the boss before they do the final input which is open treasure which leads to game victory
 @when("open treasure")
 def treasureroom_win():
-	if boss == True:
-		if current_room == TreasureRoom:
-			print("The chest is opened revealing millions of dollars of jewels. You have evaded the death this elusive temple brings. You are now a rich man with a story to tell.")
-			game_start = False
-		else:
-			print("There is no treasure anywhere")
+	if boss == True and current_room == TreasureRoom:
+		print("The chest is opened revealing millions of dollars of jewels. You have evaded the death this elusive temple brings. You are now a rich man with a story to tell.")
+		game_start = False
+		quit()
+	else:
+		print("There is no treasure anywhere")
 
 #BOSS FIGHT ########################################
 if current_room == TreasureRoom and boss == False:
