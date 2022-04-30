@@ -23,9 +23,9 @@ SwordRoom = Room("You are in an all but barren dark room, except for a gleaming 
 
 BurialTomb = Room("You are in the burial tomb, but it was waiting for you. It collapses suffocating you untill death")
 
-TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound. Darts start flying towards you. DO SOMETHING!")
+TrapRoom = Room("You enter a room that is crowded in bushes, you hear a weird hissing sound.Darts start flying towards you.DO SOMETHING!")
 
-BushRoom = Room("What was once a room is now overtaken by nature. To see more you may have to get to cutting")
+BushRoom = Room("What was once a room is now overtaken by nature. To see more you may have to get to cutting trees.")
 
 DeadEnd = Room("The room is a deadend, the only way back is the way you came. But there is a skeleton that searching may prove useful, unless you already have.")
 
@@ -125,16 +125,22 @@ def enter_temple():
 @when("go DIRECTION")
 @when("travel DIRECTION")
 def travel(direction):
-	global current_room
-	if direction in current_room.exits():
-		#checks if the current room list of exits
-		#the direction the player wants to go
-		current_room = current_room.exit(direction)
-		print(f"You go {direction}")
-		print(current_room)
-	else:
-		print("You can't go that way")
+    global current_room
+    if direction in current_room.exits():
+        #checks if the current room list of exits
+        #the direction the player wants to go
+        current_room = current_room.exit(direction)
+        print(f"You go {direction}")
+        print(current_room)
+    else:
+        print("You can't go that way") 
+    if current_room == BurialTomb or current_room == DeathRoom:
+        print("you have died!")
+        quit()
 
+	
+
+#this code is for the word look, this code informs the user of their surroundings once they say look+ the room exits and items.
 @when("look")
 def look():
 	print(current_room)
@@ -144,7 +150,7 @@ def look():
 		for item in current_room.item:
 			print(item)
 
-
+#This code is picking items and it makes sure the item is in the room and exists and if it does it informs the user they picked up the item while if it doesnt it says it doesnt see an item
 @when("pick ITEM")
 @when("pick up ITEM")
 @when("get ITEM")
@@ -167,37 +173,10 @@ def check_inventory():
 	for item in inventory:
 		print(item)
 
-@when("go north")
-@when("go south")
-@when("go east")
-@when("go west")
-@when("r")
-def game_end():
-	if current_room == MainTempleRoom:
-		print("goodluck on your journey!")
-	elif current_room == DeathRoom:
-		game_death == True
-		quit()
-	
-
-@when("go north")
-@when("go south")
-@when("go east")
-@when("go west")
-@when("r")
-def game_end():
-	if current_room == DeadEnd:
-		print("You have a feeling that you are closer then ever to finding the treasure")
-	elif current_room == BurialTomb:
-		game_death == True
-		quit()
-
-	
 
 
 
-
-
+#this code is too search the skeleton in the deadend room to get a note to break into the treasure room
 @when("search skeleton")
 @when("look through skeleton")
 @when("search the skeleton")
@@ -241,31 +220,13 @@ def use(item):
 
 
 
-@when("block darts")
-@when("block")
-@when("block with sword")
-@when("block darts with sword")
-def sword_block():
-	global sword_block
-	if current_room == TrapRoom and "sword" in inventory and sword_block == False:
-		print("You have blocked off the darts with your sword,You may cut the bushes and push on!")
-		sword_block = True
-	elif "sword" not in inventory:
-		print("You don't have a sword,the darts pierce you and you die.")
-		quit()
-	elif sword_block == True:
-		print("There are no more darts to block")
-	else:
-		print("There is nothing to block")
-
-
 
 
 #this code is for the trap room and makes the user cut the bushes with their sword to move onto new room
 @when("cut bushes")
 @when("cut through bushes")
 def cut_bush():
-	if current_room == TrapRoom and "sword" in inventory and sword_block == True:
+	if current_room == TrapRoom and "sword" in inventory:
 		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
 		TrapRoom.north = HallwayRoom
 		TrapRoom.west = BurialTomb
@@ -278,8 +239,7 @@ def cut_bush():
 
 
 #this code is for the bush room and makes the user cut the bushes with their sword to move onto new room
-@when("cut bushes")
-@when("cut through bushes")
+@when("cut trees")
 def bush_cut():
 	if current_room == BushRoom and "sword" in inventory:
 		print("You have cut through the bushes and revealed new paths on your quest to treasure.")
@@ -304,7 +264,7 @@ def treasureroom_win():
 	else:
 		print("There is no treasure anywhere")
 
-#BOSS FIGHT ########################################
+#BOSS FIGHT ########################################STILL TO BE WORKED ON################
 if current_room == TreasureRoom and boss == False:
    print("You must fight the boss to take the treasure")
 #defining health variables for the fight
